@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/T-Ivings/tinyapp/issues"
   },
-  "homepage": "https://github.com/T-Ivings/tinyapp#readme"
+  "homepage": "https://github.com/T-Ivings/tinyapp#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0"
+  }
 }
