@@ -6,12 +6,16 @@ const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
+//generates a string of six alphanumeric numbers
 function generateRandomString() {
   const alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let results = "";
+  let randomNumber; //added variable for extra clarification and a cleaner line 16
   for (let x = 6; x > 0; x--) {
-    results += alphanumeric.charAt(Math.round(Math.random() * 61) + 1)
+    randomNumber = Math.round(Math.random() * 61) + 1
+    results += alphanumeric.charAt(randomNumber)
   }
+  return results;
 }
 
 
@@ -29,7 +33,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL};
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls_show", templateVars);
 });
 
