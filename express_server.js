@@ -12,7 +12,7 @@ function generateRandomString() {
   let results = "";
   let randomNumber; //added variable for extra clarification and a cleaner line 16
   for (let x = 6; x > 0; x--) {
-    randomNumber = Math.round(Math.random() * 61) + 1
+    randomNumber = Math.round(Math.random() * 61)
     results += alphanumeric.charAt(randomNumber)
   }
   return results;
@@ -60,6 +60,11 @@ res.redirect(`/urls/${shortURL}`) //redirects using the random string
 
 });
 //------------------------------------
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+   delete urlDatabase[req.params.shortURL];
+  res.redirect('/urls')
+})
 
 app.get("/u/:shortURL", (req, res) => {
    const shortURL = req.params.shortURL;
