@@ -52,18 +52,20 @@ app.get("/urls.json", (req, res) => {
 // The browser then renders this HTML.
 //------------------------------------
 app.post('/urls', (req, res) => {
-
 const shortURL = generateRandomString(); //generates a 6 char random string and assigns it to short url
 urlDatabase[shortURL] = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
 res.redirect(`/urls/${shortURL}`) //redirects using the random string
-
-
 });
 //------------------------------------
 
 app.post("/urls/:shortURL/delete", (req, res) => {
    delete urlDatabase[req.params.shortURL];
   res.redirect('/urls')
+})
+
+app.post("/urls/:id", (req, res) => {
+res.redirect(`/urls/${req.params.id}`)
+
 })
 
 app.get("/u/:shortURL", (req, res) => {
