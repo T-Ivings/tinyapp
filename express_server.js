@@ -42,11 +42,30 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("ok");
-});
 
+
+
+// After we generate our new shortURL, we add it to our database.
+// Our server then responds with a redirect to /urls/:shortURL.
+// Our browser then makes a GET request to /urls/:shortURL.
+// Our server looks up the longURL from the database, sends the shortURL and longURL to the urls_show template, generates the HTML, and then sends this HTML back to the browser.
+// The browser then renders this HTML.
+//------------------------------------
+app.post('/urls', (req, res) => {
+
+const shortURL = generateRandomString(); //generates a 6 char random string and assigns it to short url
+urlDatabase[shortURL] = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
+res.redirect(`/urls/${shortURL}`) //redirects using the random string
+
+
+});
+//------------------------------------
+
+app.get("/u/:shortURL", (req, res) => {
+   const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
