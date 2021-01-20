@@ -21,28 +21,37 @@ function generateRandomString() {
   return results;
 }
 
+const users = { };
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+app.get("/", (req, res) => {
+  res.redirect("/urls");
+})
 app.get("/urls", (req, res) => {
+  const user_id = req.cookies["user_id"]
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"]
+    users,
+    user_id
   };
-  res.render("urls_index", templateVars)
+  res.render("urls_index", templateVars);
 })
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", {username: req.cookies["username"]});
+  const user_id = req.cookies["user_id"]
+  res.render("urls_new", {users, user_id});
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const user_id = req.cookies["user_id"]
   const templateVars = { 
     shortURL: req.params.shortURL, 
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    users,
+    user_id
   };
   res.render("urls_show", templateVars);
 });
@@ -50,6 +59,11 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+app.get("/register", (req, res) => {
+  const user_id = req.cookies["user_id"]
+res.render("registration", {users, user_id})
 });
 
 
@@ -66,9 +80,9 @@ const shortURL = generateRandomString(); //generates a 6 char random string and 
 urlDatabase[shortURL] = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
 res.redirect(`/urls/${shortURL}`) //redirects using the random string
 });
-//------------------------------------
 
 
+//deletes url
 app.post("/urls/:shortURL/delete", (req, res) => {
    delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
@@ -79,26 +93,39 @@ res.redirect(`/urls/${req.params.id}`);
 
 });
 
+//edits url
 app.post("/urls/:id/edit", (req, res) => {
   urlDatabase[req.params.id] = req.body.longURL;
   res.redirect(`/urls`);
 });
 
+//logs user in with cookie
 app.post ("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  res.cookie("users", {users: req.cookies["user_id"]});
   res.redirect(`/urls`);
 });
 
+//logs out and deletes cookies
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
 
-app.get("/u/:shortURL", (req, res) => {
-   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
-  res.redirect(longURL);
-});
+//registers new user with user specified email and password and assigns cookie and id a random string 
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  res.cookie("user_id", id)
+  newUser = {
+    id,
+    email,
+    password
+  }
+  users[id] = newUser;
+  res.redirect("/urls");
+})
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
