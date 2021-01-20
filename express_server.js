@@ -10,10 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 const users = { };
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+const urlDatabase = { };
 
 //generates a string of six alphanumeric numbers
 const generateRandomString = function() {
@@ -42,13 +39,14 @@ const emailFinder = function(email) {
   }
 };
 
-//cause i got sick of typing /urls and everyone keeps telling me programmers are lazy
+//cause i got sick of typing /urls and everyone keeps telling me programmers are lazy, now you can just write localhost:8080 and you're at the login page
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
+//renders url_index
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["userID"];
+  const userID = req.cookies["userID"]; 
   const templateVars = {
     urls: urlDatabase,
     users,
@@ -57,16 +55,22 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+//checks if user is sign in, the renders page if they are. if theyre not, directed to login page
 app.get("/urls/new", (req, res) => {
   const userID = req.cookies["userID"];
-  res.render("urls_new", {users, userID});
+  if (userID) {
+    res.render("urls_new", {users, userID});
+  } else {
+    res.redirect("/login");
+  }
 });
 
+//rengers urls_show
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.cookies["userID"];
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     users,
     userID
   };
@@ -78,14 +82,23 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//renders registration page
 app.get("/register", (req, res) => {
   const userID = req.cookies["userID"];
   res.render("registration", {users, userID});
 });
 
+//renders login page
 app.get("/login", (req, res) => {
   const userID = req.cookies["userID"];
   res.render("login", {users, userID});
+});
+
+//forgot to make this earlier, allows short url usable by anyone
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL]['longURL'];
+  res.redirect(longURL);
 });
 
 
@@ -97,8 +110,15 @@ app.get("/login", (req, res) => {
 // The browser then renders this HTML.
 //------------------------------------
 app.post('/urls', (req, res) => {
+  
   const shortURL = generateRandomString(); //generates a 6 char random string and assigns it to short url
-  urlDatabase[shortURL] = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
+  const longURL = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
+  const userID = req.cookies["userID"];
+  const newURL = { 
+    longURL,
+    userID
+  }
+  urlDatabase[shortURL] = newURL;
   res.redirect(`/urls/${shortURL}`); //redirects using the random string
 });
 
@@ -120,18 +140,20 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 
-//DOES NOT WORK
+//logs user in , checks email and password match
 app.post("/login", (req, res) => {
 
   if(emailFinder(req.body.email)) {
     for (const user in users) {
+      console.log(users[user])
+      console.log("user", user)
+      console.log(req.body.password)
       if (users[user].password === req.body.password) {
+        console.log("user", user)
         res.cookie("userID", users[user].id)
         res.redirect(`/urls`);
-      } else {
-        return res.status(403).send("Password does not match!")
-      }
-    }
+      } 
+    } return res.status(403).send("Password does not match!")  
   } else {
     return res.status(403).send("Email does not exist!")
   }
