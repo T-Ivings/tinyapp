@@ -9,6 +9,12 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+const users = { };
+const urlDatabase = {
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com"
+};
+
 //generates a string of six alphanumeric numbers
 function generateRandomString() {
   const alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -21,12 +27,21 @@ function generateRandomString() {
   return results;
 }
 
-const users = { };
+function emailFinder(email) {
+  let activeUser;
+  for (const user in users) {
+if (users[user].email === email) {
+  activeUser = users[user];
+    console.log("test")
+}
+  }
+  if (activeUser) { 
+    return true;
+  } else {
+    return false;
+  }
+}
 
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
 app.get("/", (req, res) => {
   res.redirect("/urls");
 })
@@ -117,10 +132,17 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   res.cookie("user_id", id)
+
+  if (email === "" || password === "") {
+    return res.status(400).send('Please enter a valid username and/or password');
+  }
   newUser = {
     id,
     email,
     password
+  }
+  if(emailFinder(email)) {
+   return res.status(400).send('Email already in use!')
   }
   users[id] = newUser;
   res.redirect("/urls");
