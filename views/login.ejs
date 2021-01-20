@@ -7,14 +7,15 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Register a User</title>
+    <title>Login</title>
   </head>
 
   <body>
     <%- include('partials/_header') %>
-    <h1>Register:</h1>
+    <h1>Login: </h1>
 <div class="float-left">
-  <form action="/register" method="POST">
+   
+  <form action="/login" method="POST">
       <div class="form-group">
         <label for="email">Email address</label>
         <input type="email" class="form-control" name="email" placeholder="Enter email">

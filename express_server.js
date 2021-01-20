@@ -27,6 +27,7 @@ function generateRandomString() {
   return results;
 }
 
+//checks email against list of emails in use
 function emailFinder(email) {
   let activeUser;
   for (const user in users) {
@@ -42,6 +43,7 @@ if (users[user].email === email) {
   }
 }
 
+//cause i got sick of typing /urls and everyone keeps telling me programmers are lazy
 app.get("/", (req, res) => {
   res.redirect("/urls");
 })
@@ -81,6 +83,11 @@ app.get("/register", (req, res) => {
 res.render("registration", {users, user_id})
 });
 
+app.get("/login", (req, res) => {
+  const user_id = req.cookies["user_id"];
+  res.render("login", {users, user_id});
+}
+)
 
 
 
@@ -126,6 +133,15 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/loginPage', (req, res) => {
+  res.redirect('/login');
+  });
+  
+  app.post('/registerPage', (req, res) => {
+  res.redirect('/register');
+  });
+    
+
 //registers new user with user specified email and password and assigns cookie and id a random string 
 app.post('/register', (req, res) => {
   const id = generateRandomString();
@@ -136,6 +152,9 @@ app.post('/register', (req, res) => {
   if (email === "" || password === "") {
     return res.status(400).send('Please enter a valid username and/or password');
   }
+  if(emailFinder(email)) {
+    return res.status(400).send('Email already in use!')
+   }
   newUser = {
     id,
     email,
