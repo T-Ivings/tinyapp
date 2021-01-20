@@ -103,30 +103,32 @@ app.get("/u/:id", (req, res) => {
 
 
 
-// After we generate our new shortURL, we add it to our database.
-// Our server then responds with a redirect to /urls/:shortURL.
-// Our browser then makes a GET request to /urls/:shortURL.
-// Our server looks up the longURL from the database, sends the shortURL and longURL to the urls_show template, generates the HTML, and then sends this HTML back to the browser.
-// The browser then renders this HTML.
+//posts
 //------------------------------------
+//saves url to user
 app.post('/urls', (req, res) => {
   
-  const shortURL = generateRandomString(); //generates a 6 char random string and assigns it to short url
-  const longURL = req.body.longURL; // urlDatabase is an object where the random 6 string chars are keys, longer urls are the values
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL; 
   const userID = req.cookies["userID"];
   const newURL = { 
     longURL,
     userID
   }
   urlDatabase[shortURL] = newURL;
-  res.redirect(`/urls/${shortURL}`); //redirects using the random string
+  res.redirect(`/urls/${shortURL}`); 
 });
 
 
 //deletes url
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const userID = req.cookies["userID"];
+  if (userID) {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -135,8 +137,13 @@ app.post("/urls/:id", (req, res) => {
 
 //edits url
 app.post("/urls/:id/edit", (req, res) => {
-  urlDatabase[req.params.id] = req.body.longURL;
-  res.redirect(`/urls`);
+  const userID = req.cookies['userID'];
+  if (userID) {
+    urlDatabase[req.params.id] = req.body.longURL;
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login')
+  }
 });
 
 
