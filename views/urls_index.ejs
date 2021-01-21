@@ -28,15 +28,20 @@
         <% for(let url in urls) { %>
           <% if(userID === urls[url].userID) {%>
             <tr>
-            <td><%= url %></td>
+            <td><a href="<%= urls[url]['longURL']%>" target="_blank"><%= url %></a></td>
             <td><%= urls[url].longURL %></td>
             <td><form method="POST" action="/urls/<%=url%>"><button type="submit" class="btn btn-outline-primary">Edit</button></form></td>
             <td><form method="POST" action="/urls/<%=url%>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form></td>
+          <% } %> 
+          <% urlCount++; %>
           <% } %>
-          <% } %>
+          <% if (userID && urlCount === 0) {%>
+          <td>Click<a href="/urls/new"> here </a>to start making some URLS!</td>
+            <% } %>
           <% if (!userID){ %>
             </tr>
             <td>Sign in to start making some short URLS!</td>
+            <% urlCount = 0; %>
 
         <% } %>
       </tbody>

@@ -1,3 +1,4 @@
+//checks userDatabase for email, returns true if true, undefined if false
 const findUserByEmail = function(email, userDatabase) {
   for (const user in userDatabase) {
     if (userDatabase[user].email === email) {
@@ -5,13 +6,12 @@ const findUserByEmail = function(email, userDatabase) {
     }
   }
 };
+//generates 6 digit alphanumeric string
 const generateRandomString = function() {
   const alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let results = "";
-  let randomNumber; //added variable for extra clarification and a cleaner line 16
   for (let x = 6; x > 0; x--) {
-    randomNumber = Math.round(Math.random() * 61);
-    results += alphanumeric.charAt(randomNumber);
+    results += alphanumeric.charAt(Math.round(Math.random() * 61));
   }
   return results;
 };
