@@ -27,16 +27,17 @@
       <tbody>
         <% for(let url in urls) { %>
           <% if(userID === urls[url].userID) {%>
-          <tr>
+            <tr>
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
             <td><form method="POST" action="/urls/<%=url%>"><button type="submit" class="btn btn-outline-primary">Edit</button></form></td>
             <td><form method="POST" action="/urls/<%=url%>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form></td>
-          
-          <% } else if (!userID){ %>
-              <td>Sign in to start making some short URLS!</td>
-            </tr>
           <% } %>
+          <% } %>
+          <% if (!userID){ %>
+            </tr>
+            <td>Sign in to start making some short URLS!</td>
+
         <% } %>
       </tbody>
     </table>

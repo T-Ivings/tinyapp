@@ -2,7 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
-const findUserByEmail = require('./helper')
+const findUserByEmail = require('./helper');
+const generateRandomString = require('./helper');
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -22,16 +23,7 @@ const users = { };
 const urlDatabase = { };
 
 //generates a string of six alphanumeric numbers
-const generateRandomString = function() {
-  const alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let results = "";
-  let randomNumber; //added variable for extra clarification and a cleaner line 16
-  for (let x = 6; x > 0; x--) {
-    randomNumber = Math.round(Math.random() * 61);
-    results += alphanumeric.charAt(randomNumber);
-  }
-  return results;
-};
+
 
 
 //cause i got sick of typing /urls and everyone keeps telling me programmers are lazy, now you can just write localhost:8080 and you're at the login page
@@ -53,7 +45,6 @@ app.get("/urls", (req, res) => {
     users,
     userID
   };
-  console.log(userID)
   res.render("urls_index", templateVars);
 });
 

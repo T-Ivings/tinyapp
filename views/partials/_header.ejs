@@ -1,6 +1,6 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
-    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <a class="navbar-brand" href="/">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -15,12 +15,12 @@
           <div class="float-left">
             <form method="POST" action="/logout">
               <b>Logged in as: <%=users[userID].email%></b></div>
-              <button type="submit" class="btn btn-primary">Logout</button></form>
+              <button type="submit" class="btn btn-success">Logout</button></form>
         <% } else { %> 
           <form method="POST" action="/loginPage">
-            <button type="submit" class="btn btn-primary">Login</button></form>&nbsp;&nbsp;
+            <button type="submit" class="btn btn-success">Login</button></form>&nbsp;&nbsp;
             <form method="POST" action="/registerPage">
-              <button type="submit" class="btn btn-primary">Register</button></form>
+              <button type="submit" class="btn btn-success">Register</button></form>
         </div>
           <%}%>
   </nav>
