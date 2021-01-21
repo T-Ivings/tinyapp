@@ -4,6 +4,7 @@ const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
 const { findUserByEmail } = require('./helper');
 const { generateRandomString } = require('./helper');
+const methodOverride = require('method-override')
 //-----------------------------------------------------------
 
 const app = express();
@@ -19,6 +20,8 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
+
+app.use(methodOverride('_method'))
 
 const users = { };
 const urlDatabase = { };
@@ -70,7 +73,12 @@ app.get("/urls/:shortURL", (req, res) => {
     users,
     userID
   };
-  return res.render("urls_show", templateVars);
+  if (userID) {
+    return res.render("urls_show", templateVars);
+  } else {
+    return res.status(403).send("Invalid email, you shouldn't be here!");
+  }
+  
 });
 
 //json urlDatabase
@@ -154,7 +162,7 @@ app.post("/urls/:id", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
   const userID = req.session.userID;
   if (userID) {
-    urlDatabase[req.params.id] = req.body.longURL;
+    urlDatabase[req.params.id]['longURL'] = req.body.longURL;
     return res.redirect('/urls');
   } else {
     return res.status(403).send('Invalid user!');
